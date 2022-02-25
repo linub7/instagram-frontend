@@ -11,6 +11,7 @@ export const darkTheme = {
   accent: '#e67e22',
   fontColor: 'black',
   bgColor: '#2c2c2c',
+  borderColor: 'white',
 };
 
 export const GlobalStyles = createGlobalStyle`
