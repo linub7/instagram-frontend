@@ -7,6 +7,7 @@ const Input = styled.input`
   border: 0.5px solid
     ${(props) => (props.hasError ? 'tomato' : props.theme.borderColor)};
   border-radius: 3px;
+
   margin-top: 1px;
   box-sizing: border-box;
   &::placeholder {
