@@ -1,7 +1,12 @@
 import { BsInstagram } from 'react-icons/bs';
 import { FaHome, FaRegCompass } from 'react-icons/fa';
-import { FiUser } from 'react-icons/fi';
 import styled from 'styled-components';
+import { useReactiveVar } from '@apollo/client';
+import { isLoggedInVar } from '../apollo';
+import { Link } from 'react-router-dom';
+import routes from '../routes';
+import useUser from '../hooks/useUser';
+import Avatar from './Avatar';
 
 const SHeader = styled.div`
   width: 100%;
@@ -28,7 +33,24 @@ const Icon = styled.span`
   cursor: pointer;
 `;
 
+const Button = styled.span`
+  background-color: ${(props) => props.theme.accent};
+  border-radius: 4px;
+  padding: 3px 15px;
+  color: white;
+  font-weight: 600;
+`;
+
+const IconsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const Header = () => {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const { data } = useUser();
+
   return (
     <SHeader>
       <Wrapper>
@@ -36,15 +58,23 @@ const Header = () => {
           <BsInstagram size="1.5em" style={{ cursor: 'pointer' }} />
         </Column>
         <Column>
-          <Icon>
-            <FaHome />
-          </Icon>
-          <Icon>
-            <FaRegCompass />
-          </Icon>
-          <Icon>
-            <FiUser />
-          </Icon>
+          {isLoggedIn ? (
+            <IconsContainer>
+              <Icon>
+                <FaHome />
+              </Icon>
+              <Icon>
+                <FaRegCompass />
+              </Icon>
+              <Icon>
+                <Avatar url={data?.me?.avatar} />
+              </Icon>
+            </IconsContainer>
+          ) : (
+            <Link to={routes.home}>
+              <Button>Login</Button>
+            </Link>
+          )}
         </Column>
       </Wrapper>
     </SHeader>
