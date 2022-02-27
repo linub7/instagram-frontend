@@ -7,6 +7,7 @@ import { BsBookmark, BsHeart, BsHeartFill as SolidHeart } from 'react-icons/bs';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import { gql, useMutation } from '@apollo/client';
 import PhotoComments from './PhotoComments';
+import { Link } from 'react-router-dom';
 // import { FEED_QUERY } from '../../screens/Home';
 
 const PhotoContainer = styled.div`
@@ -141,19 +142,23 @@ const Photo = ({
   return (
     <PhotoContainer>
       <PhotoHeader>
-        {user.avatar ? (
-          <Avatar lg={true} url={user.avatar} />
-        ) : (
-          <FiUser
-            style={{
-              width: '22px',
-              height: '22px',
-              borderRadius: '15px',
-              overflow: 'hidden',
-            }}
-          />
-        )}
-        <Username>{user.username}</Username>
+        <Link to={`/user/${user.username}`}>
+          {user.avatar ? (
+            <Avatar lg={true} url={user.avatar} />
+          ) : (
+            <FiUser
+              style={{
+                width: '22px',
+                height: '22px',
+                borderRadius: '15px',
+                overflow: 'hidden',
+              }}
+            />
+          )}
+        </Link>
+        <Link to={`/user/${user.username}`}>
+          <Username>{user.username}</Username>
+        </Link>
       </PhotoHeader>
       <PhotoFile src={file} alt="feed" />
       <PhotoData>
@@ -178,6 +183,7 @@ const Photo = ({
         </PhotoActions>
         <Likes>{likes === 1 ? `1 like` : `${likes} Likes`}</Likes>
         <PhotoComments
+          photoId={id}
           user={user}
           caption={caption}
           commentNumber={commentNumber}

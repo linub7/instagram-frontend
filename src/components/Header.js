@@ -2,11 +2,13 @@ import { BsInstagram } from 'react-icons/bs';
 import { FaHome, FaRegCompass } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useReactiveVar } from '@apollo/client';
-import { isLoggedInVar } from '../apollo';
+import { isLoggedInVar, logUserOut } from '../apollo';
 import { Link } from 'react-router-dom';
 import routes from '../routes';
 import useUser from '../hooks/useUser';
 import Avatar from './Avatar';
+import { FiUser } from 'react-icons/fi';
+import { IoIosLogOut } from 'react-icons/io';
 
 const SHeader = styled.div`
   width: 100%;
@@ -55,7 +57,9 @@ const Header = () => {
     <SHeader>
       <Wrapper>
         <Column>
-          <BsInstagram size="1.5em" style={{ cursor: 'pointer' }} />
+          <Link to={'/'}>
+            <BsInstagram size="1.5em" style={{ cursor: 'pointer' }} />
+          </Link>
         </Column>
         <Column>
           {isLoggedIn ? (
@@ -67,7 +71,16 @@ const Header = () => {
                 <FaRegCompass />
               </Icon>
               <Icon>
-                <Avatar url={data?.me?.avatar} />
+                <Link to={`/user/${data?.me?.username}`}>
+                  {data?.me?.avatar ? (
+                    <Avatar url={data?.me?.avatar} />
+                  ) : (
+                    <FiUser />
+                  )}
+                </Link>
+              </Icon>
+              <Icon>
+                <IoIosLogOut onClick={logUserOut} />
               </Icon>
             </IconsContainer>
           ) : (

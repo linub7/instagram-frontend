@@ -4,8 +4,13 @@ import { FatText } from '../shared';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Fragment } from 'react';
+import { gql, useMutation } from '@apollo/client';
+import { AiFillDelete } from 'react-icons/ai';
 
-const Comment = styled.div``;
+const CommentContainer = styled.div`
+  margin-bottom: 7px;
+`;
+
 const Caption = styled.span`
   margin-left: 10px;
   a {
@@ -18,7 +23,23 @@ const Caption = styled.span`
   }
 `;
 
-const PhotoComment = ({ author, caption }) => {
+const DELETE_COMMENT = gql`
+  mutation deleteComment($commentId: Int!) {
+    deleteComment(commentId: $commentId) {
+      ok
+      error
+    }
+  }
+`;
+
+const PhotoComment = ({
+  photoId,
+  commentId,
+  username,
+  isMine,
+  author,
+  caption,
+}) => {
   // how to sanitize an input that user entered and clean it
   // const cleanedPayload = sanitizeHtml(
   //   caption.replace(/#[\w]+/g, '<mark>$&</mark>'),
@@ -37,21 +58,66 @@ const PhotoComment = ({ author, caption }) => {
     )
   );
 
+  const updateDeleteComment = (cache, result) => {
+    const {
+      data: {
+        deleteComment: { ok },
+      },
+    } = result;
+    if (ok) {
+      cache.evict({
+        id: `Comment:${commentId}`,
+      });
+      cache.modify({
+        id: `Photo:${photoId}`,
+        fields: {
+          commentNumber(prev) {
+            return prev - 1;
+          },
+        },
+      });
+    }
+  };
+
+  const [deleteComment] = useMutation(DELETE_COMMENT, {
+    variables: { commentId },
+    update: updateDeleteComment,
+  });
+
+  const handleDeleteComment = () => {
+    deleteComment();
+  };
+
   return (
-    <Comment>
-      <FatText>{author}</FatText>
-      {/* How to set an html into jsx */}
-      {/* <Caption
-        dangerouslySetInnerHTML={{
-          __html: cleanedPayload,
-        }}
-      /> */}
-      <Caption>{payload}</Caption>
-    </Comment>
+    <CommentContainer>
+      <>
+        <Link to={`/user/${username}`}>
+          <FatText>{author}</FatText>
+        </Link>
+        {/* How to set an html into jsx */}
+        {/* <Caption
+          dangerouslySetInnerHTML={{
+            __html: cleanedPayload,
+          }}
+        /> */}
+        <Caption>{payload}</Caption>
+      </>
+      {isMine && (
+        <AiFillDelete
+          size="1.2em"
+          style={{ float: 'right', color: 'tomato', cursor: 'pointer' }}
+          onClick={handleDeleteComment}
+        />
+      )}
+    </CommentContainer>
   );
 };
 
 PhotoComment.propTypes = {
+  commentId: PropTypes.number,
+  photoId: PropTypes.number,
+  username: PropTypes.string.isRequired,
+  isMine: PropTypes.bool,
   author: PropTypes.string.isRequired,
   caption: PropTypes.string.isRequired,
 };
