@@ -1,11 +1,10 @@
 import styled from 'styled-components';
-import { FiUser } from 'react-icons/fi';
 
 const SAvatar = styled.div`
-  width: 22px;
-  height: 22px;
-  border-radius: 15px;
-  /* background-color: #2c2c2c; */
+  width: ${(props) => (props.lg ? '30px' : '25px')};
+  height: ${(props) => (props.lg ? '30px' : '25px')};
+  border-radius: 50%;
+  background-color: #2c2c2c;
   overflow: hidden;
 `;
 
@@ -13,10 +12,10 @@ const Img = styled.img`
   max-width: 100%;
 `;
 
-const Avatar = ({ url = '' }) => {
+const Avatar = ({ url = '', lg = false }) => {
   return (
-    <SAvatar>
-      {url !== '' ? <Img src={url} alt="avatar" /> : <FiUser />}
+    <SAvatar lg={lg}>
+      {url !== '' ? <Img src={url} alt="avatar" /> : null}
     </SAvatar>
   );
 };
