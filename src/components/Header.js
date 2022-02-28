@@ -1,8 +1,14 @@
-import { BsInstagram } from 'react-icons/bs';
+import { BsFillMoonFill, BsFillSunFill, BsInstagram } from 'react-icons/bs';
 import { FaHome, FaRegCompass } from 'react-icons/fa';
 import styled from 'styled-components';
 import { useReactiveVar } from '@apollo/client';
-import { isLoggedInVar, logUserOut } from '../apollo';
+import {
+  darkModeVar,
+  disableDarkMode,
+  enableDarkMode,
+  isLoggedInVar,
+  logUserOut,
+} from '../apollo';
 import { Link } from 'react-router-dom';
 import routes from '../routes';
 import useUser from '../hooks/useUser';
@@ -49,23 +55,35 @@ const IconsContainer = styled.div`
   align-items: center;
 `;
 
+const DarkModeBtn = styled.button`
+  cursor: pointer;
+`;
+
 const Header = () => {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const darkMode = useReactiveVar(darkModeVar);
   const { data } = useUser();
 
   return (
     <SHeader>
       <Wrapper>
         <Column>
-          <Link to={'/'}>
+          <Link to={routes.home}>
             <BsInstagram size="1.5em" style={{ cursor: 'pointer' }} />
           </Link>
         </Column>
         <Column>
           {isLoggedIn ? (
             <IconsContainer>
+              <DarkModeBtn
+                onClick={darkMode ? disableDarkMode : enableDarkMode}
+              >
+                {darkMode ? <BsFillSunFill /> : <BsFillMoonFill />}
+              </DarkModeBtn>
               <Icon>
-                <FaHome />
+                <Link to={routes.home}>
+                  <FaHome />
+                </Link>
               </Icon>
               <Icon>
                 <FaRegCompass />
